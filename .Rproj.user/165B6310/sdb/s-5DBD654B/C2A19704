@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "#大標題\n##次標題\n##次標題",
+    "created" : 1457339759205.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2116571547",
+    "id" : "C2A19704",
+    "lastKnownWriteTime" : 1457339828,
+    "last_content_update" : 1457339828914,
+    "path" : "~/GitHub/BigDataCGUIM/HW2.md",
+    "project_path" : "HW2.md",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "markdown"
+}
