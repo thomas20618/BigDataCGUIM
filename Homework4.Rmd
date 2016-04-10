@@ -1,0 +1,102 @@
+---
+title: "Facebook粉絲團分析(朱立倫政治人物)"
+---
+
+##讀取朱立倫粉絲團資料程式碼
+
+if (!require('Rfacebook')){
+  install.packages("Rfacebook")
+  library(Rfacebook)
+}
+token<-'CAACEdEose0cBAKbbWnbawD1bNPdFqPWJm0aKXBq8tlrpA5eMjKOSohhDFbp6T3sFijrwWYZCOOlozA8VzDM33riLYouTHqiKiNgmhVKPPbsluZBypWthA6R0EArv7gskHiSa9GCo640uZAygdz4FKdLn2g3DsYzfrcLbSS4gRcYCQx5O7ZBxZBZBtcxLuZBormtDJ2ZCd60lJgZDZD'
+totalPage<-NULL
+lastDate<-Sys.Date()
+DateVectorStr<-as.character(seq(as.Date("2016-01-01"),lastDate,by="5 days"))
+for(i in 1:(length(DateVectorStr)-1)){
+  tempPage<-getPage("llchu", token,
+                    since = DateVectorStr[i],until = DateVectorStr[i+1])
+  totalPage<-rbind(totalPage,tempPage)
+}
+nrow(totalPage)
+
+#從2016年1月一號開始，每隔五天為週期，當有五天沒有po文就停止數據
+
+14 posts 13 posts 25 posts 4 posts 5 posts 5 posts 7 posts 5 posts 1 posts 6 posts 5 posts 3 posts 4 posts 6 posts 4 posts 8 posts 5 posts 5 posts 4 posts 5 posts
+
+#2016/1/1~2016/4/10，每隔五天為週期，總共po文數134篇
+
+#每日like數的程式碼
+
+totalPage$datetime <- as.POSIXct(totalPage$created_time, 
+                                 format = "%Y-%m-%dT%H:%M:%S+0000", 
+                                 tz = "GMT") 
+totalPage$dateTPE <- format(totalPage$datetime, "%Y-%m-%d", 
+                            tz = "Asia/Taipei") 
+totalPage$weekdays <-weekdays(as.Date(totalPage$dateTPE))
+PostCount<-aggregate(id~dateTPE,totalPage,length)
+LikeCount<-aggregate(likes_count~dateTPE,totalPage,mean)
+library(knitr)
+kable(head(LikeCount[order(LikeCount$likes_count,decreasing = T),]))
+
+#每日like數
+
+|   |dateTPE    | likes_count|
+|:--|:----------|-----------:|
+|16 |2016-01-16 |     83386.0|
+|34 |2016-02-06 |     57639.0|
+|9  |2016-01-09 |     52729.5|
+|15 |2016-01-15 |     49404.6|
+|17 |2016-01-18 |     46132.0|
+|36 |2016-02-08 |     41877.0|
+
+##2016/1/16號總統大選，朱立倫敗選感言，獲得最多讚數83386
+
+#每日comments數的程式碼
+
+totalPage$datetime <- as.POSIXct(totalPage$created_time, 
+                                 format = "%Y-%m-%dT%H:%M:%S+0000", 
+                                 tz = "GMT") 
+totalPage$dateTPE <- format(totalPage$datetime, "%Y-%m-%d", 
+                            tz = "Asia/Taipei") 
+totalPage$weekdays <-weekdays(as.Date(totalPage$dateTPE))
+CommentCount<-aggregate(comments_count~dateTPE,totalPage,mean)
+library(knitr)
+kable(head(CommentCount[order(CommentCount$comments_count,decreasing = T),]))
+
+##每日comments數結果
+
+|   |dateTPE    | comments_count|
+|:--|:----------|--------------:|
+|16 |2016-01-16 |        10605.5|
+|15 |2016-01-15 |         7843.6|
+|17 |2016-01-18 |         3629.0|
+|9  |2016-01-09 |         1883.0|
+|18 |2016-01-19 |         1649.0|
+|34 |2016-02-06 |         1377.0|
+
+##2016/1/16號朱立倫敗選，許多民眾的加油或批評總數最多
+
+#每日shares數分析的程式碼
+
+totalPage$datetime <- as.POSIXct(totalPage$created_time, 
+                                 format = "%Y-%m-%dT%H:%M:%S+0000", 
+                                 tz = "GMT") 
+totalPage$dateTPE <- format(totalPage$datetime, "%Y-%m-%d", 
+                            tz = "Asia/Taipei") 
+totalPage$weekdays <-weekdays(as.Date(totalPage$dateTPE))
+SharesCount<-aggregate(shares_count~dateTPE,totalPage,mean)
+library(knitr)
+kable(head(SharesCount[order(SharesCount$shares_count,decreasing = T),]))
+
+##每日shares數分析結果
+
+|   |dateTPE    | shares_count|
+|:--|:----------|------------:|
+|15 |2016-01-15 |     2342.400|
+|1  |2016-01-01 |     1521.000|
+|16 |2016-01-16 |     1363.500|
+|34 |2016-02-06 |     1264.000|
+|12 |2016-01-12 |     1000.429|
+|9  |2016-01-09 |      937.000|
+
+##2016/1/15獲得最多分享，選前之夜，主席大力催票
